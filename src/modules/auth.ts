@@ -24,8 +24,8 @@ export const createJWT = (user) => {
 }
 
 // Proect Authentication
-export const protect = (res, req, next) => {
-    const bearer = req.headers.authroization
+export const protect = (req, res, next) => {
+    const bearer = req.headers.authorization
 
     if (!bearer) {
         res.status(401)
@@ -34,14 +34,15 @@ export const protect = (res, req, next) => {
     }
 
     const [, token] = bearer.split(' ')
+
     if (!token) {
         res.status(401)
-        res.json({ message: 'not authorized' })
+        res.json({ message: 'not valid token' })
         return
     }
 
     try {
-        const user = jwt.vertify(token, process.env.JWT_SECRET)
+        const user = jwt.verify(token, process.env.JWT_SECRET)
         req.user = user
         next()
     } catch (e) {

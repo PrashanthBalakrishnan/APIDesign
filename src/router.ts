@@ -1,5 +1,20 @@
 import { Router } from 'express'
 import { body, oneOf, validationResult } from 'express-validator'
+import {
+    createProduct,
+    deleteProduct,
+    getAllProducts,
+    getOneProduct,
+    updateProduct,
+} from './handler/product'
+import { handleInputErrors } from './modules/middleware'
+import {
+    createUpdate,
+    deleteUpdate,
+    getOneUpdate,
+    getUpdates,
+    updateUpdate,
+} from './handler/update'
 
 const router = Router()
 
@@ -7,33 +22,43 @@ const router = Router()
  * PRODUCT
  */
 
-router.get('/products', (req, res) => {})
-router.get('/products:id', (req, res) => {})
-router.put('/products', body('name').isString, (req, res) => {})
-router.post('/products', body('name').isString, (req, res) => {})
-router.delete('/products', (req, res) => {})
+router.get('/product', getAllProducts)
+router.get('/product/:id', getOneProduct)
+router.put(
+    '/product/:id',
+    body('name').isString(),
+    handleInputErrors,
+    updateProduct
+)
+router.post(
+    '/product',
+    body('name').isString(),
+    handleInputErrors,
+    createProduct
+)
+router.delete('/product/:id', deleteProduct)
 
 /**
  * PRODUCT
  */
 
-router.get('/update', (req, res) => {})
-router.get('/update:id', (req, res) => {})
+router.get('/update', getUpdates)
+router.get('/update/:id', getOneUpdate)
 router.put(
-    '/update',
+    '/update/:id',
     body('title').optional(),
     body('body').optional(),
     body('status').isIn(['IN_PROGRESS,LIVE,DEPRECATED,ARCHIVED']).optional(),
     body('version').optional(),
-    (req, res) => {}
+    updateUpdate
 )
 router.post(
     '/update',
     body('title').exists().isString(),
     body('body').exists().isString(),
     body('productId').exists().isString(),
-    (req, res) => {}
+    createUpdate
 )
-router.delete('/update', (req, res) => {})
+router.delete('/update/:id', deleteUpdate)
 
 export default router
